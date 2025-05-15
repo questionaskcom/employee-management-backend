@@ -62,20 +62,20 @@ class AuthController extends Controller
 
 
 
-        // Get user's IP address
-    $ipAddress = $request->ip();
+      
+    // $ipAddress = $request->ip();
 
-    // Fetch location details based on IP
-    $location = $this->getLocationFromIP($ipAddress);
+   
+    // $location = $this->getLocationFromIP($ipAddress);
 
-        AuthLog::create([
-            'user_id' => $user->id,
-            'email' => $user->email,
-            'action' => 'login',
-            'method' => 'Register',
-            'ip_address' => $ipAddress,
-        'location' => json_encode($location), // Convert array to JSON string,
-        ]);
+        // AuthLog::create([
+        //     'user_id' => $user->id,
+        //     'email' => $user->email,
+        //     'action' => 'login',
+        //     'method' => 'Register',
+        //     'ip_address' => $ipAddress,
+        // 'location' => json_encode($location), // Convert array to JSON string,
+        // ]);
 
 
 
