@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\AuthLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 
 class AuthController extends Controller
@@ -35,12 +36,57 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
-
-        $user = Auth::user();
-        return response()->json($user);
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+            $user =Auth::user();
+    
+    
+            // Check if the user is deactivated
+            if ($user->active == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your account was deactivated on ' . Carbon::parse($user->user_deactivate_time)->diffForHumans(),
+                    'deactivated_at' => Carbon::parse($user->user_deactivate_time)->toDateTimeString()
+                ], 403); // 403 Forbidden
+            }
+    
+     
+    
+        $token = $user->createToken('login', ['*'], now()->addHour())->plainTextToken;
+    
+    
+    
+    
+        $success['token'] = $token;
+    
+    
+        $success['name'] =$user->name;
+        $response=[
+        'success' => true,
+        'data' => $success,
+        'message' => 'User login successfully'
+    
+        ];
+    
+        
+    
+    
+        return response()->json($response, 200);
+    }
+    if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid credentials'
+        ], 401); // Invalid password
+    }
+    else {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized'
+        ], 401); // Set status code to 401
+    }
+    
+    
+    
     }
 
     public function logout(Request $request)
