@@ -82,11 +82,30 @@ class AuthController extends Controller
     
     }
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        return response()->json(['message' => 'Logged out']);
+    public function synclogout(Request $request)
+{
+    $user = Auth::user();
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'User not authenticated'
+        ], 401);
     }
+
+
+    $request->user()->currentAccessToken()->delete();
+
+    
+
+    
+
+    return response()->json([
+        'success' => true,
+        'message' => 'User logged out successfully'
+    ], 200);
+}
+
 
     public function me(Request $request)
     {
