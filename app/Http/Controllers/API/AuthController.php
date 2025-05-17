@@ -40,14 +40,7 @@ class AuthController extends Controller
             $user =Auth::user();
     
     
-            // Check if the user is deactivated
-            if ($user->active == 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your account was deactivated on ' . Carbon::parse($user->user_deactivate_time)->diffForHumans(),
-                    'deactivated_at' => Carbon::parse($user->user_deactivate_time)->toDateTimeString()
-                ], 403); // 403 Forbidden
-            }
+            
     
      
     
