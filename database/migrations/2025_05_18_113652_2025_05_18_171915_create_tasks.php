@@ -20,6 +20,18 @@ return new class extends Migration
     $table->timestamps();
 });
 
+
+Schema::table('tasks', function (Blueprint $table) {
+    $table->string('status')->default('todo'); // todo, in_progress, done
+});
+
+Schema::create('employee_task', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('employee_id')->constrained()->onDelete('cascade');
+    $table->foreignId('task_id')->constrained()->onDelete('cascade');
+});
+
+
     }
 
     /**

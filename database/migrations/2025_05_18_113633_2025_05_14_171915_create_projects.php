@@ -19,7 +19,17 @@ return new class extends Migration
     $table->timestamps();
 });
 
+
+Schema::create('employee_project', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('employee_id')->constrained()->onDelete('cascade');
+    $table->foreignId('project_id')->constrained()->onDelete('cascade');
+});
+
+
     }
+
+    
 
     /**
      * Reverse the migrations.

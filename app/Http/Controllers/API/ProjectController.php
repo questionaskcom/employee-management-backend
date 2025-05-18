@@ -19,11 +19,18 @@ public function store(Request $request)
 {
     $data = $request->validate([
         'name' => 'required',
-        'description' => 'nullable'
+        'description' => 'nullable',
+        'employee_ids' => 'array'
     ]);
 
-    return Project::create($data);
+    $project = Project::create($data);
+    if (!empty($data['employee_ids'])) {
+        $project->employees()->sync($data['employee_ids']);
+    }
+
+    return $project->load('employees', 'tasks');
 }
+
 
 public function show($id)
 {
