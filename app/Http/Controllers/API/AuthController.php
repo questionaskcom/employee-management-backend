@@ -18,7 +18,7 @@ class AuthController extends Controller
 
 
     public function register(Request $request)
-    {
+    { 
         $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users',
@@ -34,53 +34,38 @@ class AuthController extends Controller
         return response()->json($user);
     }
 
-    public function login(Request $request)
-    {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-            $user =Auth::user();
-    
-    
-            
-    
-     
-    
+   public function login(Request $request)
+{
+    // Validate the request
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
+
+    // Attempt to login
+    if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $user = Auth::user();
+
+        // Create token
         $token = $user->createToken('login', ['*'], now()->addHour())->plainTextToken;
-    
-    
-    
-    
-        $success['token'] = $token;
-    
-    
-        $success['name'] =$user->name;
-        $response=[
-        'success' => true,
-        'data' => $success,
-        'message' => 'User login successfully'
-    
-        ];
-    
-        
-    
-    
-        return response()->json($response, 200);
-    }
-    if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+
+        // Prepare response
         return response()->json([
-            'success' => false,
-            'message' => 'Invalid credentials'
-        ], 401); // Invalid password
+            'success' => true,
+            'data' => [
+                'token' => $token,
+                'name' => $user->name,
+            ],
+            'message' => 'User login successfully'
+        ], 200);
     }
-    else {
-        return response()->json([
-            'success' => false,
-            'message' => 'Unauthorized'
-        ], 401); 
-    }
-    
-    
-    
-    }
+
+    // If login fails
+    return response()->json([
+        'success' => false,
+        'message' => 'Invalid credentials'
+    ], 401);
+}
 
     public function synclogout(Request $request)
 {

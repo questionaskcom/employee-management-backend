@@ -10,14 +10,13 @@ use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
-    // List all employees (filtered by role if needed)
+    // List all users
     public function index()
     {
-        // Optionally filter by role:
-        return response()->json(User::where('role', 'employee')->get());
+        return response()->json(User::all());
     }
 
-    // Store new employee
+    // Store new user
     public function store(Request $request)
     {
         $request->validate([
@@ -28,37 +27,33 @@ class EmployeeController extends Controller
             'password' => 'nullable|string|min:6',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['name', 'email', 'department', 'phone']);
+        $data['password'] = Hash::make($request->input('password', 'defaultpassword'));
 
-        if (!empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            // Set a default password or leave null depending on your policy
-            $data['password'] = Hash::make('defaultpassword'); // or skip this
+        try {
+            $user = User::create($data);
+            return response()->json($user, 201);
+        } catch (\Exception $e) {
+            \Log::error('Failed to create user: ' . $e->getMessage());
+            return response()->json(['error' => 'Internal server error'], 500);
         }
-
-        $data['role'] = 'employee'; // Ensure this user is marked as an employee
-
-        $employee = User::create($data);
-
-        return response()->json($employee, 201);
     }
 
-    // Show single employee
+    // Show single user
     public function show($id)
     {
-        $employee = User::where('role', 'employee')->findOrFail($id);
-        return response()->json($employee);
+        $user = User::findOrFail($id);
+        return response()->json($user);
     }
 
-    // Update employee
+    // Update user
     public function update(Request $request, $id)
     {
-        $employee = User::where('role', 'employee')->findOrFail($id);
+        $user = User::findOrFail($id);
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => ['required', 'email', Rule::unique('users')->ignore($employee->id)],
+            'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'department' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:6',
@@ -69,19 +64,19 @@ class EmployeeController extends Controller
         if (!empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         } else {
-            unset($data['password']); // Don't update if password not provided
+            unset($data['password']);
         }
 
-        $employee->update($data);
+        $user->update($data);
 
-        return response()->json($employee);
+        return response()->json($user);
     }
 
-    // Delete employee
+    // Delete user
     public function destroy($id)
     {
-        $employee = User::where('role', 'employee')->findOrFail($id);
-        $employee->delete();
+        $user = User::findOrFail($id);
+        $user->delete();
 
         return response()->json(null, 204);
     }

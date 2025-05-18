@@ -22,7 +22,6 @@ return new class extends Migration
     // Employee-specific fields
     $table->string('department')->nullable();
     $table->string('phone')->nullable();
-    $table->string('role')->default('employee'); // NEW
 
     $table->timestamps();
 });
@@ -43,9 +42,7 @@ return new class extends Migration
             $table->integer('last_activity')->index();
         });
 
-         Schema::table('users', function (Blueprint $table) {
-        $table->string('role')->default('employee')->after('phone');
-    });
+    
     }
 
     /**

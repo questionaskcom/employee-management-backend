@@ -11,17 +11,16 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Count only users with role 'employee'
-        $totalEmployees = User::where('role', 'employee')->count();
+        // Count all users
+        $totalUsers = User::count();
 
-        // Group employees by department
-        $employeesByDepartment = User::where('role', 'employee')
-            ->select('department', DB::raw('count(*) as count'))
+        // Group users by department
+        $usersByDepartment = User::select('department', DB::raw('count(*) as count'))
             ->groupBy('department')
             ->get();
 
         // Format department data
-        $departments = $employeesByDepartment->map(function ($item) {
+        $departments = $usersByDepartment->map(function ($item) {
             return [
                 'name' => $item->department,
                 'employeeCount' => $item->count,
@@ -29,8 +28,8 @@ class DashboardController extends Controller
         });
 
         return response()->json([
-            'totalEmployees' => $totalEmployees,
-            'employees' => $employeesByDepartment,
+            'totalUsers' => $totalUsers,
+            'users' => $usersByDepartment,
             'departments' => $departments,
         ]);
     }
