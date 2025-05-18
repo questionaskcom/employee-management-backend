@@ -1,24 +1,19 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    //
-
-    protected $fillable = ['project_id', 'title', 'completed'];
+    protected $fillable = ['project_id', 'title', 'status'];
 
     public function project()
-{
-    return $this->belongsTo(Project::class);
-}
+    {
+        return $this->belongsTo(Project::class);
+    }
 
-public function employees()
-{
-    return $this->belongsToMany(Employee::class);
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }
-
-}
- 

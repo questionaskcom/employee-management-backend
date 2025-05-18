@@ -19,27 +19,23 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-
 Route::middleware('auth:sanctum')->group(function () {
+    // Employee
     Route::get('/employees', [EmployeeController::class, 'index']);
     Route::post('/employees', [EmployeeController::class, 'store']);
     Route::put('/employees/{id}', [EmployeeController::class, 'update']);
     Route::delete('/employees/{id}', [EmployeeController::class, 'destroy']);
-});
 
-
-Route::middleware('auth:sanctum')->group(function () {
+    // Department
     Route::get('/departments', [DepartmentController::class, 'index']);
     Route::post('/departments', [DepartmentController::class, 'store']);
     Route::put('/departments/{id}', [DepartmentController::class, 'update']);
     Route::delete('/departments/{id}', [DepartmentController::class, 'destroy']);
-});
 
-Route::middleware('auth:sanctum')->group(function () {
+    // Project & Task
     Route::apiResource('projects', ProjectController::class);
-    Route::apiResource('tasks', TaskController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('tasks', TaskController::class)->only(['index', 'show', 'store', 'update', 'destroy']);
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 });
-
-
-
-Route::middleware('auth:sanctum')->get('/dashboard', [DashboardController::class, 'index']);
