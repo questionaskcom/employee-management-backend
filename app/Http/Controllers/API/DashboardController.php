@@ -4,26 +4,23 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    //
-
     public function index()
     {
-        // Total employees count
-        $totalEmployees = User::count();
+        // Count only users with role 'employee'
+        $totalEmployees = User::where('role', 'employee')->count();
 
-        // Employees count grouped by department
-        $employeesByDepartment = User::select('department', DB::raw('count(*) as count'))
+        // Group employees by department
+        $employeesByDepartment = User::where('role', 'employee')
+            ->select('department', DB::raw('count(*) as count'))
             ->groupBy('department')
             ->get();
 
-        // Departments list with employee count (same as above)
-        // You can also fetch departments from a departments table if you have one
+        // Format department data
         $departments = $employeesByDepartment->map(function ($item) {
             return [
                 'name' => $item->department,
