@@ -3,7 +3,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\EmployeeController;
 use App\Http\Controllers\API\DepartmentController;
-
+use App\Http\Controllers\API\TaskController;
+use App\Http\Controllers\API\ProjectController;
 use App\Http\Controllers\API\DashboardController;
 
 use Illuminate\Http\Request;
@@ -33,6 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/departments/{id}', [DepartmentController::class, 'update']);
     Route::delete('/departments/{id}', [DepartmentController::class, 'destroy']);
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('projects', ProjectController::class);
+    Route::apiResource('tasks', TaskController::class)->only(['store', 'update', 'destroy']);
+});
+
 
 
 Route::middleware('auth:sanctum')->get('/dashboard', [DashboardController::class, 'index']);
