@@ -13,22 +13,24 @@ class ProjectController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'description' => 'nullable|string',
-            'employee_ids' => 'array',
-            'employee_ids.*' => 'exists:users,id',
-        ]);
+{
+    $data = $request->validate([
+        'name' => 'required',
+        'description' => 'nullable',
+        'employee_ids' => 'array'
+    ]);
 
-        $project = Project::create($data);
+    $project = Project::create([
+        'name' => $data['name'],
+        'description' => $data['description'] ?? null,
+    ]);
 
-        if (!empty($data['employee_ids'])) {
-            $project->employees()->sync($data['employee_ids']);
-        }
-
-        return $project->load('employees', 'tasks');
+    if (!empty($data['employee_ids'])) {
+        $project->employees()->sync($data['employee_ids']);
     }
+
+    return response()->json($project->load('employees', 'tasks'), 201);
+}
 
     public function show($id)
     {

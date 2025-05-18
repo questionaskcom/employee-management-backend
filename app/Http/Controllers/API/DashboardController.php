@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Project; // Import the Project model
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -27,10 +28,14 @@ class DashboardController extends Controller
             ];
         });
 
+        // Get last 5 created projects
+        $recentProjects = Project::latest()->take(5)->get();
+
         return response()->json([
             'totalUsers' => $totalUsers,
             'users' => $usersByDepartment,
             'departments' => $departments,
+            'recentProjects' => $recentProjects, // Add this line
         ]);
     }
 }
