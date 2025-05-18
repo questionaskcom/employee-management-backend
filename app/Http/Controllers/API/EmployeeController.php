@@ -34,7 +34,6 @@ class EmployeeController extends Controller
             $user = User::create($data);
             return response()->json($user, 201);
         } catch (\Exception $e) {
-            \Log::error('Failed to create user: ' . $e->getMessage());
             return response()->json(['error' => 'Internal server error'], 500);
         }
     }
