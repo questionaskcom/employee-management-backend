@@ -22,7 +22,7 @@ return new class extends Migration
 
 
 Schema::table('tasks', function (Blueprint $table) {
-    $table->string('status')->default('todo'); // todo, in_progress, done
+    $table->string('status')->default('todo'); 
 });
 
 Schema::create('employee_task', function (Blueprint $table) {
@@ -40,6 +40,7 @@ Schema::create('employee_task', function (Blueprint $table) {
     public function down(): void
     {
         //
+        Schema::dropIfExists('tasks');
     }
 };
  

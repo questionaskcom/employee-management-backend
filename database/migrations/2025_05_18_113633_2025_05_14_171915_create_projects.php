@@ -37,6 +37,7 @@ Schema::create('employee_project', function (Blueprint $table) {
     public function down(): void
     {
         //
+        Schema::dropIfExists('projects');
     }
 };
  
